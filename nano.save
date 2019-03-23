@@ -1,0 +1,30 @@
+ame__)
+
+@app.route("/")
+@requires_auth
+def index():
+    return render_template("project.html")
+
+response = 'https://api.airvisual.com/v2/city?city={CITY}&state={STATE}&country={COUNTRY}&key=Mip7589CqMSA8xFcL'
+
+
+@app.route('/words', methods=['GET' , 'POST'])
+def city():
+
+    city = request.form.get("CITY")
+    country = request.form.get("COUNTRY")
+    state = request.form.get("STATE")
+
+    city_url= response.format(CITY = city,COUNTRY= country,STATE=state)
+
+    resp =requests.get(city_url)
+    if resp.ok:
+            showinfo = resp.json()
+    else:
+            print(resp.reason)
+
+    return jsonify(showinfo)
+
+if __name__ == "__main__":
+    app.run( debug = True )
+

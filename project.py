@@ -3,7 +3,8 @@ import json
 import requests
 from pprint import pprint
 from functools import wraps
-from flask import  Response
+from flask import Response
+from cassandra.cluster import Cluster
 
 
 def check_auth(username, password):
@@ -25,6 +26,9 @@ def requires_auth(f):
     return decorated
 
 
+cluster = Cluster(['35.234.140.169'],port=9042)
+session = cluster.connect('database')
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -40,9 +44,14 @@ def city():
 
     city = request.form.get("CITY")
     country = request.form.get("COUNTRY")
-    state = request.form.get("STATE")
+    state = request.args.get("STATE")
 
-    city_url= response.format(CITY = city,COUNTRY= country,STATE=state)
+    rows = session.execute("""select state from stats where city= '{}' ALLOW FILTERING""".format(city))
+
+    for database in rows:
+        data = database.state
+
+    city_url= response.format(CITY = city,STATE=data,COUNTRY= country)
 
     resp =requests.get(city_url)
     if resp.ok:
@@ -53,5 +62,5 @@ def city():
     return jsonify(showinfo)
 
 if __name__ == "__main__":
-    app.run( debug = True )
+    app.run(debug = True,port=8080)
 

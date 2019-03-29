@@ -41,5 +41,6 @@ For example you can test City:Austin Country:USA . State (Texas) should be fille
 
 ###### Notes:
 - Both city and country names MUST start with a capital letter. 
-- Due to licence restrictions, data is limited to a very few cities only. 
+- Due to licence restrictions, data is limited to a very few cities only.
+- A html document can be found under templates to make our API more user friendly. 
 
